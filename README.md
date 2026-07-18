@@ -9,15 +9,15 @@ The prototype turns scattered event information into a concise shortlist that an
 - **React 19 and TypeScript** for the interface and interaction model.
 - **Next.js 16**, compiled through **Vinext and Vite** for a Cloudflare Workers-compatible deployment.
 - **CSS** for the responsive visual system, with no component-library dependency.
-- Browser **Geolocation** and **localStorage** for optional general-area discovery and device-local saved events.
+- Browser **Geolocation**, a postal-code centroid lookup, and **localStorage** for optional nearby discovery and device-local saved events.
 - **No application backend in the submission prototype.** The production path is a JavaScript/TypeScript API, a relational database, and scheduled source-ingestion jobs; D1 and Drizzle ORM are already available in the project for that next step.
 
 ## What the prototype does
 
-- Demonstrates location-aware event cards with sourced Tulsa-area examples, a ZIP code, or a browser-provided general location.
+- Filters sourced Tulsa-area examples by a real 5, 10, or 20-mile radius from a ZIP centroid or an opt-in browser location.
 - Filters by timing, age group, cost, indoor setting, stroller access, and registration requirements.
 - Distinguishes drop-in events from registration-required events and provides direct registration links.
-- Estimates drive time from the selected general area.
+- Shows straight-line distance to each venue and a clearly labeled drive-time estimate from the selected area.
 - Saves promising ideas on the device for later.
 - Explains why each event may fit a family instead of repeating promotional copy.
 - Falls back to dependable places to visit when no scheduled event feels right.
@@ -27,8 +27,8 @@ The prototype turns scattered event information into a concise shortlist that an
 ## Product principles
 
 1. **Practical before promotional.** Logistics should be visible before a parent opens a detail view.
-2. **A short list beats an endless feed.** The interface starts with three strong matches.
-3. **Location can be useful without being invasive.** The prototype keeps exact coordinates on-device and accepts a generalized ZIP code.
+2. **A short list beats an endless feed.** The interface starts with six strong matches and lets the family reveal the rest.
+3. **Location can be useful without being invasive.** Device coordinates stay in the active browser tab; ZIP lookup sends only a postal code and uses its approximate center.
 4. **No-match is still a useful result.** Evergreen places provide a graceful fallback.
 
 ## How Codex and GPT-5.6 were used
@@ -49,9 +49,19 @@ The hackathon prototype uses a small, manually verified set of Tulsa-area listin
 6. Store normalized events, venues, sources, and registration links in a relational database.
 7. Rank results by family preferences, distance, timing, and information completeness.
 
+## How location works in this prototype
+
+- Every sample venue has a latitude and longitude so radius filtering uses real geographic distance rather than changing a label.
+- The default Tulsa ZIP, 74103, starts from its approximate geographic center. Other U.S. ZIP codes are resolved through [Zippopotam.us](https://docs.zippopotam.us/docs/getting-started/); only the ZIP code is sent for that lookup.
+- “Use my location” runs only after a user clicks it and grants browser permission. The returned coordinates remain in page memory and are not saved to localStorage or sent to the application server.
+- Venue distance uses the Haversine formula. Drive time is a transparent city-driving estimate derived from that distance; it is not a route, live traffic result, or promise of arrival time.
+- A production version would replace the drive-time estimate with a routing provider while keeping the ZIP fallback and permission-first location choice.
+
 ## Deliberate prototype boundaries
 
 - Event discovery currently uses a small demo dataset rather than an unrestricted web crawler.
+- The event dataset currently covers Tulsa only. A location outside the pilot area will correctly return no nearby Tulsa matches instead of presenting distant events as local.
+- Drive times are approximate and do not include a live road route, traffic, construction, or current conditions.
 - Saved events stay on the current device. Production accounts would store user-owned saves and preferences in a database so they work across devices.
 - The production ingestion system should prioritize official APIs, feeds, and organizer calendars; respect source terms and crawl limits; retain provenance; and send ambiguous records to review.
 - Public sign-in and durable saved events are planned after the submission build so the hackathon demo remains focused on the core family decision experience.

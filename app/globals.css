@@ -149,10 +149,11 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
 }
 .location-target:hover { background: #d2dec9; }
-.zip-form { display: grid; grid-template-columns: 145px minmax(170px, 1fr) auto; align-items: center; gap: 22px; padding-left: 28px; }
-.zip-control { display: block; }
-.zip-control .field-label { margin-bottom: 7px; }
-.zip-form input {
+.location-target:disabled, .primary-button:disabled { cursor: wait; opacity: 0.7; transform: none; }
+.zip-form { display: grid; grid-template-columns: 135px 160px minmax(185px, 1fr) auto; align-items: center; gap: 18px; padding-left: 24px; }
+.zip-control, .radius-control { display: block; }
+.zip-control .field-label, .radius-control .field-label { margin-bottom: 7px; }
+.zip-form input, .radius-control select {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 13px;
@@ -161,8 +162,9 @@ a { color: inherit; text-decoration: none; }
   font-weight: 750;
   outline: none;
 }
-.zip-form input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(221, 114, 92, 0.16); }
-.drive-limit { max-width: 230px; color: var(--muted); font-size: 14px; line-height: 1.45; text-align: left; }
+.radius-control select { min-height: 45px; cursor: pointer; }
+.zip-form input:focus, .radius-control select:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(221, 114, 92, 0.16); }
+.drive-limit { max-width: 255px; color: var(--muted); font-size: 13px; line-height: 1.4; text-align: left; }
 .primary-button {
   border: 0;
   border-radius: 18px;
@@ -178,6 +180,8 @@ a { color: inherit; text-decoration: none; }
 .primary-button:hover { background: var(--terracotta-dark); transform: translateY(-2px); }
 .zip-form .primary-button { min-height: 58px; padding: 0 32px; }
 .location-message { max-width: 1328px; margin: 10px auto 0; color: var(--muted); font-size: 13px; padding: 0 26px; }
+.location-privacy { max-width: 1328px; margin: 9px auto 0; padding: 0 26px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.location-privacy strong { color: var(--ink); }
 
 .filter-section { max-width: 1328px; margin: 14px auto 0; }
 .quick-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -302,7 +306,9 @@ a { color: inherit; text-decoration: none; }
 .empty-state > span { font-size: 36px; color: var(--terracotta); }
 .empty-state h3 { margin: 9px 0 6px; font-family: Georgia, serif; font-size: 31px; }
 .empty-state p { margin: 0 auto 20px; color: var(--muted); max-width: 520px; }
+.empty-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
 .empty-state button { border: 0; background: var(--terracotta); color: #fff; border-radius: 12px; padding: 13px 18px; font-weight: 800; cursor: pointer; }
+.empty-state button + button { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
 
 .places-section {
   max-width: 1328px;
@@ -389,7 +395,7 @@ footer p { margin: 0; color: var(--muted); text-align: right; }
   .finder, .filter-section, .events-section, .places-section, .places-page-hero, .places-directory, footer { margin-left: 24px; margin-right: 24px; }
   .finder { grid-template-columns: 1fr; gap: 18px; }
   .location-field { border-right: 0; }
-  .zip-form { border-top: 1px solid var(--line); padding: 18px 6px 0; }
+  .zip-form { grid-template-columns: 145px 170px minmax(190px, 1fr) auto; border-top: 1px solid var(--line); padding: 18px 6px 0; }
   .event-grid { grid-template-columns: 1fr 1fr; }
   .places-section { grid-template-columns: 1fr; gap: 34px; }
   .places-page-hero { grid-template-columns: 1fr; gap: 36px; }
@@ -411,8 +417,9 @@ footer p { margin: 0; color: var(--muted); text-align: right; }
   .finder { padding: 15px; border-radius: 22px; }
   .location-field { padding: 6px; }
   .location-field strong { font-size: 22px; }
-  .zip-form { grid-template-columns: 1fr auto; gap: 12px; }
+  .zip-form { grid-template-columns: 1fr 1fr; gap: 12px; }
   .drive-limit { display: none; }
+  .zip-form .primary-button { grid-column: 1 / -1; }
   .primary-button { padding: 0 18px; min-height: 54px; }
   .quick-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 5px; }
   .filter-chip, .filter-select select { white-space: nowrap; min-height: 44px; padding: 0 16px; }

@@ -21,11 +21,67 @@ type EventItem = {
   ageLabel: string;
   ageMin: number;
   ageMax: number;
-  driveMinutes: number;
+  latitude: number;
+  longitude: number;
   note: string;
   art: string;
   badge: string;
 };
+
+type LocationOrigin = {
+  latitude: number;
+  longitude: number;
+  label: string;
+  shortLabel: string;
+  source: "zip" | "device";
+};
+
+type ZipLookupResponse = {
+  places?: Array<{
+    latitude?: string;
+    longitude?: string;
+    "place name"?: string;
+    "state abbreviation"?: string;
+  }>;
+};
+
+const venueLocations = {
+  gatheringPlace: { latitude: 36.1196044, longitude: -95.9855622 },
+  trinityBaptist: { latitude: 36.1048455, longitude: -96.0118967 },
+  philbrook: { latitude: 36.1237809, longitude: -95.9701736 },
+  zarrowLibrary: { latitude: 36.089791, longitude: -96.0165672 },
+  guthrieGreen: { latitude: 36.1593932, longitude: -95.9921556 },
+};
+
+const defaultOrigin: LocationOrigin = {
+  latitude: 36.1539,
+  longitude: -95.9954,
+  label: "74103 · Tulsa, OK",
+  shortLabel: "74103",
+  source: "zip",
+};
+
+function distanceInMiles(origin: LocationOrigin, destination: EventItem) {
+  const earthRadiusMiles = 3958.8;
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const latitudeDifference = toRadians(destination.latitude - origin.latitude);
+  const longitudeDifference = toRadians(destination.longitude - origin.longitude);
+  const originLatitude = toRadians(origin.latitude);
+  const destinationLatitude = toRadians(destination.latitude);
+  const haversine =
+    Math.sin(latitudeDifference / 2) ** 2 +
+    Math.cos(originLatitude) * Math.cos(destinationLatitude) * Math.sin(longitudeDifference / 2) ** 2;
+
+  return earthRadiusMiles * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine));
+}
+
+function estimatedDriveMinutes(distanceMiles: number) {
+  return Math.max(5, Math.round(distanceMiles * 2.4 + 4));
+}
+
+function formatDistance(distanceMiles: number) {
+  return distanceMiles < 0.95 ? "Under 1 mi" : `${distanceMiles.toFixed(1)} mi`;
+}
 
 const events: EventItem[] = [
   {
@@ -46,7 +102,7 @@ const events: EventItem[] = [
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 8,
+    ...venueLocations.gatheringPlace,
     note: "A come-and-go Tulsa celebration with morning youth programs, storytimes, activities, performances, food, and a vendor market.",
     art: "art-garden",
     badge: "Registration link ready",
@@ -67,7 +123,7 @@ const events: EventItem[] = [
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 10,
+    ...venueLocations.trinityBaptist,
     note: "A relaxed, all-ages student music showcase with used sheet music to browse; admission is free and donations are encouraged.",
     art: "art-music",
     badge: "Easy drop-in",
@@ -90,7 +146,7 @@ const events: EventItem[] = [
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 11,
+    ...venueLocations.philbrook,
     note: "A one-hour indoor music preview from the casts of Oklahoma! and The Dustbowl Radio Hour, with time to explore Philbrook before or after.",
     art: "art-music",
     badge: "Indoor music pick",
@@ -113,7 +169,7 @@ const events: EventItem[] = [
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 11,
+    ...venueLocations.philbrook,
     note: "A flexible garden stroll for families who want to bring a well-behaved, leashed dog; the dog-friendly portion stays outdoors.",
     art: "art-garden",
     badge: "Registration link ready",
@@ -136,7 +192,7 @@ const events: EventItem[] = [
     ageLabel: "Best for ages 0–4",
     ageMin: 0,
     ageMax: 4,
-    driveMinutes: 11,
+    ...venueLocations.philbrook,
     note: "Come-and-go sensory garden play designed for children under 5, with digging, splashing, building, and room to explore at their pace.",
     art: "art-coral",
     badge: "Registration link ready",
@@ -157,7 +213,7 @@ const events: EventItem[] = [
     ageLabel: "Best for ages 0–5",
     ageMin: 0,
     ageMax: 5,
-    driveMinutes: 12,
+    ...venueLocations.zarrowLibrary,
     note: "A short family storytime with simple songs and books for little ones plus interactive stories and activities for older preschoolers.",
     art: "art-library",
     badge: "Rainy-day ready",
@@ -180,7 +236,7 @@ const events: EventItem[] = [
     ageLabel: "Best for ages 4–12",
     ageMin: 4,
     ageMax: 12,
-    driveMinutes: 3,
+    ...venueLocations.guthrieGreen,
     note: "A free literacy session where kids paint characters, objects, or scenes on smooth stones and use them to build a story.",
     art: "art-coral",
     badge: "Free registration",
@@ -203,7 +259,7 @@ const events: EventItem[] = [
     ageLabel: "Best for ages 0–10",
     ageMin: 0,
     ageMax: 10,
-    driveMinutes: 11,
+    ...venueLocations.philbrook,
     note: "A compact weekly storytime geared toward kids 10 and under, with the museum and gardens available for a longer outing afterward.",
     art: "art-library",
     badge: "Registration link ready",
@@ -226,7 +282,7 @@ const events: EventItem[] = [
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 11,
+    ...venueLocations.philbrook,
     note: "A quick look at Philbrook's koi during feeding time that pairs naturally with Storytime, the gardens, or a museum visit.",
     art: "art-garden",
     badge: "Quick add-on",
@@ -245,9 +301,10 @@ const ageOptions = [
 
 export default function Home() {
   const [zipInput, setZipInput] = useState("74103");
-  const [locationLabel, setLocationLabel] = useState("74103 · Tulsa");
+  const [origin, setOrigin] = useState<LocationOrigin>(defaultOrigin);
+  const [radiusMiles, setRadiusMiles] = useState(5);
   const [locationError, setLocationError] = useState("");
-  const [driveOffset, setDriveOffset] = useState(0);
+  const [isLocating, setIsLocating] = useState(false);
   const [datePreset, setDatePreset] = useState<"upcoming" | "weekend" | "today" | "weekday">("upcoming");
   const [age, setAge] = useState("little");
   const [freeOnly, setFreeOnly] = useState(false);
@@ -292,6 +349,7 @@ export default function Home() {
       const overlapsAge = event.ageMin <= selectedAge.max && event.ageMax >= selectedAge.min;
       return (
         (datePreset === "upcoming" || event.dayGroups.includes(datePreset)) &&
+        distanceInMiles(origin, event) <= radiusMiles &&
         overlapsAge &&
         (!freeOnly || event.isFree) &&
         (!indoorOnly || event.setting === "Indoor") &&
@@ -300,20 +358,44 @@ export default function Home() {
         (!showSaved || favorites.includes(event.id))
       );
     });
-  }, [age, datePreset, dropInOnly, favorites, freeOnly, indoorOnly, showSaved, strollerOnly]);
+  }, [age, datePreset, dropInOnly, favorites, freeOnly, indoorOnly, origin, radiusMiles, showSaved, strollerOnly]);
 
   const displayedEvents = showAll ? filteredEvents : filteredEvents.slice(0, eventPreviewLimit);
 
-  function submitLocation(event: FormEvent<HTMLFormElement>) {
+  async function submitLocation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const normalized = zipInput.trim();
     if (!/^\d{5}$/.test(normalized)) {
       setLocationError("Enter a five-digit ZIP code.");
       return;
     }
-    setLocationError("");
-    setLocationLabel(`${normalized} · nearby`);
-    setDriveOffset((Number(normalized.at(-1)) % 5) - 2);
+    setIsLocating(true);
+    setLocationError("Looking up the approximate center of that ZIP…");
+    try {
+      const response = await fetch(`https://api.zippopotam.us/us/${normalized}`);
+      if (!response.ok) throw new Error("ZIP not found");
+      const data = (await response.json()) as ZipLookupResponse;
+      const place = data.places?.[0];
+      const latitude = Number(place?.latitude);
+      const longitude = Number(place?.longitude);
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) throw new Error("ZIP has no coordinates");
+
+      const placeName = place?.["place name"] ?? "nearby";
+      const state = place?.["state abbreviation"];
+      setOrigin({
+        latitude,
+        longitude,
+        label: `${normalized} · ${placeName}${state ? `, ${state}` : ""}`,
+        shortLabel: normalized,
+        source: "zip",
+      });
+      setLocationError("ZIP updated. Distances use the approximate center of that ZIP area.");
+      setShowAll(false);
+    } catch {
+      setLocationError("We couldn't find that ZIP code. Check it and try again.");
+    } finally {
+      setIsLocating(false);
+    }
   }
 
   function useCurrentLocation() {
@@ -321,16 +403,35 @@ export default function Home() {
       setLocationError("Location is not available here. Try a ZIP code instead.");
       return;
     }
-    setLocationError("Finding your general area…");
+    setIsLocating(true);
+    setLocationError("Waiting for your browser's location permission…");
     navigator.geolocation.getCurrentPosition(
-      () => {
-        setLocationLabel("Your current area");
-        setLocationError("Location found. Exact coordinates stay on this device in this prototype.");
-        setDriveOffset(2);
+      (position) => {
+        setOrigin({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          label: "Your current location",
+          shortLabel: "your location",
+          source: "device",
+        });
+        setLocationError("Location found. Distance calculations stay in this browser tab.");
+        setIsLocating(false);
+        setShowAll(false);
       },
-      () => setLocationError("We couldn't access your location. A ZIP code works just as well."),
+      () => {
+        setLocationError("We couldn't access your location. A ZIP code works just as well.");
+        setIsLocating(false);
+      },
       { enableHighAccuracy: false, timeout: 6000 },
     );
+  }
+
+  function useTulsaDemoArea() {
+    setOrigin(defaultOrigin);
+    setZipInput("74103");
+    setRadiusMiles(5);
+    setLocationError("Tulsa demo area restored.");
+    setShowAll(false);
   }
 
   function toggleFavorite(id: number) {
@@ -388,12 +489,12 @@ export default function Home() {
 
       <section className="finder" aria-labelledby="finder-title">
         <div className="location-field">
-          <button className="location-target" type="button" onClick={useCurrentLocation} aria-label="Use my current location">
+          <button className="location-target" type="button" onClick={useCurrentLocation} aria-label="Use my current location" disabled={isLocating}>
             <span aria-hidden="true">⌾</span>
           </button>
           <div>
             <span className="field-label" id="finder-title">Starting near</span>
-            <strong>{locationLabel}</strong>
+            <strong>{origin.label}</strong>
           </div>
         </div>
         <form onSubmit={submitLocation} className="zip-form">
@@ -408,11 +509,31 @@ export default function Home() {
               placeholder="ZIP code"
             />
           </label>
-          <span className="drive-limit">Showing ideas within about a 30-minute drive.</span>
-          <button className="primary-button" type="submit">Update area</button>
+          <label className="radius-control" htmlFor="radius">
+            <span className="field-label">Search radius</span>
+            <select
+              id="radius"
+              value={radiusMiles}
+              onChange={(event) => {
+                setRadiusMiles(Number(event.target.value));
+                setShowAll(false);
+              }}
+            >
+              <option value={5}>Within 5 miles</option>
+              <option value={10}>Within 10 miles</option>
+              <option value={20}>Within 20 miles</option>
+            </select>
+          </label>
+          <span className="drive-limit">Straight-line distance is calculated to the venue; drive time is an estimate, not live traffic.</span>
+          <button className="primary-button" type="submit" disabled={isLocating}>
+            {isLocating ? "Updating…" : "Update area"}
+          </button>
         </form>
       </section>
       {locationError && <p className="location-message" role="status">{locationError}</p>}
+      <p className="location-privacy">
+        <strong>Private by default.</strong> Device coordinates are used only in this browser tab and are never saved. ZIP lookups send only the ZIP—not an exact address—to a postal-code service.
+      </p>
 
       <section className="filter-section" aria-label="Event filters">
         <div className="quick-filters">
@@ -472,7 +593,7 @@ export default function Home() {
             <h2 id="events-title">A few good ideas for your family</h2>
           </div>
           <div className="results-meta">
-            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · {events.length} Tulsa examples</span>
+            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} within {radiusMiles} miles · {events.length} Tulsa examples</span>
             {showSaved && <button type="button" onClick={() => setShowSaved(false)}>Show all events</button>}
           </div>
         </div>
@@ -481,7 +602,8 @@ export default function Home() {
           <div className="event-grid">
             {displayedEvents.map((event) => {
               const isFavorite = favorites.includes(event.id);
-              const driveTime = Math.max(5, event.driveMinutes + driveOffset);
+              const distanceMiles = distanceInMiles(origin, event);
+              const driveTime = estimatedDriveMinutes(distanceMiles);
               return (
                 <article className="event-card" key={event.id}>
                   <div className={`event-art ${event.art}`} aria-hidden="true">
@@ -521,8 +643,8 @@ export default function Home() {
                       </a>
                     )}
                     <div className="card-footer">
-                      <span>From {locationLabel.split(" · ")[0]}</span>
-                      <strong>{driveTime} min drive</strong>
+                      <span>{formatDistance(distanceMiles)} from {origin.shortLabel}</span>
+                      <strong>≈ {driveTime} min drive</strong>
                       <button type="button" onClick={() => setSelectedEvent(event)} aria-label={`See details for ${event.title}`}>See the plan <span aria-hidden="true">→</span></button>
                     </div>
                   </div>
@@ -533,16 +655,16 @@ export default function Home() {
         ) : (
           <div className="empty-state">
             <span aria-hidden="true">☼</span>
-            <h3>No perfect matches yet.</h3>
-            <p>Try removing a filter—or skip the schedule and choose a reliable place below.</p>
-            <button type="button" onClick={() => {
-              setFreeOnly(false);
-              setIndoorOnly(false);
-              setStrollerOnly(false);
-              setDropInOnly(false);
-              setAge("all");
-              setShowSaved(false);
-            }}>Show me more options</button>
+            <h3>No Tulsa matches within {radiusMiles} miles.</h3>
+            <p>Expand the radius, remove a filter, or return to the Tulsa demo area. The prototype currently contains Tulsa listings only.</p>
+            <div className="empty-actions">
+              {radiusMiles < 20 && (
+                <button type="button" onClick={() => setRadiusMiles(radiusMiles === 5 ? 10 : 20)}>
+                  Search within {radiusMiles === 5 ? 10 : 20} miles
+                </button>
+              )}
+              <button type="button" onClick={useTulsaDemoArea}>Use Tulsa demo area</button>
+            </div>
           </div>
         )}
 
@@ -600,7 +722,13 @@ export default function Home() {
               </div>
               <div><dt>Age fit</dt><dd>{selectedEvent.ageLabel}</dd></div>
               <div><dt>Getting around</dt><dd>{selectedEvent.stroller ? "Stroller friendly" : "Not stroller friendly"}</dd></div>
-              <div><dt>From your area</dt><dd>{Math.max(5, selectedEvent.driveMinutes + driveOffset)} min drive</dd></div>
+              <div>
+                <dt>From your area</dt>
+                <dd>
+                  {formatDistance(distanceInMiles(origin, selectedEvent))} · ≈ {estimatedDriveMinutes(distanceInMiles(origin, selectedEvent))} min drive
+                  <small>Estimated from distance; live traffic and road conditions are not included.</small>
+                </dd>
+              </div>
             </dl>
             <div className="modal-actions">
               {selectedEvent.registrationUrl && (

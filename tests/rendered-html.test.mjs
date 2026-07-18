@@ -27,11 +27,16 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /Route 66 Festival: Tales of the Mother Road/);
   assert.match(html, /74103 · Tulsa/);
   assert.match(html, /Change ZIP/);
+  assert.match(html, /Search radius/);
+  assert.match(html, /Within 5 miles/);
   assert.match(html, /Update area/);
   assert.match(html, /Philbrook Dog Days/);
   assert.match(html, /Oklahoma! \+ The Dustbowl Radio Hour Preview/);
-  assert.match(html, /9(?:<!--.*?-->|\s)*matches(?:<!--.*?-->|\s)*·(?:<!--.*?-->|\s)*9(?:<!--.*?-->|\s)*Tulsa examples/);
+  assert.match(html, /9(?:<!--.*?-->|\s)*matches(?:<!--.*?-->|\s)*within(?:<!--.*?-->|\s)*5(?:<!--.*?-->|\s)*miles(?:<!--.*?-->|\s)*·(?:<!--.*?-->|\s)*9(?:<!--.*?-->|\s)*Tulsa examples/);
   assert.match(html, /Show(?:<!--.*?-->|\s)*3(?:<!--.*?-->|\s)*more ideas/);
+  assert.match(html, /Private by default/);
+  assert.match(html, /Straight-line distance is calculated to the venue/);
+  assert.match(html, /≈(?:<!--.*?-->|\s)*\d+(?:<!--.*?-->|\s)*min drive/);
   assert.match(html, /Registration required/);
   assert.match(html, /Open the form/);
   assert.match(html, /Nothing feels right/);
