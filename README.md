@@ -4,6 +4,14 @@ Nook & Roam is a warm, location-aware discovery experience for parents and famil
 
 The prototype turns scattered event information into a concise shortlist that answers the practical questions first: Is it free? Indoors or outdoors? Do we need to register? Is it stroller friendly? Which ages will enjoy it? How long is the drive from our general area? When registration is required, the event card and detail view link directly to the organizer's registration form.
 
+## Built with
+
+- **React 19 and TypeScript** for the interface and interaction model.
+- **Next.js 16**, compiled through **Vinext and Vite** for a Cloudflare Workers-compatible deployment.
+- **CSS** for the responsive visual system, with no component-library dependency.
+- Browser **Geolocation** and **localStorage** for optional general-area discovery and device-local saved events.
+- **No application backend in the submission prototype.** The production path is a JavaScript/TypeScript API, a relational database, and scheduled source-ingestion jobs; D1 and Drizzle ORM are already available in the project for that next step.
+
 ## What the prototype does
 
 - Demonstrates location-aware event cards with sourced Tulsa-area examples, a ZIP code, or a browser-provided general location.
@@ -13,6 +21,7 @@ The prototype turns scattered event information into a concise shortlist that an
 - Saves promising ideas on the device for later.
 - Explains why each event may fit a family instead of repeating promotional copy.
 - Falls back to dependable places to visit when no scheduled event feels right.
+- Provides a dedicated places directory with links to each venue’s official visitor page.
 - Links every Tulsa example to an official organizer page and labels the prototype boundary honestly.
 
 ## Product principles

@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import { places } from "./places-data";
 
 type EventItem = {
   id: number;
@@ -163,13 +164,6 @@ const events: EventItem[] = [
   },
 ];
 
-const places = [
-  { name: "Gathering Place", detail: "Free · Outdoor · All ages", icon: "PLAY" },
-  { name: "Discovery Lab", detail: "Paid · Indoor · Ages 0–12", icon: "MAKE" },
-  { name: "Tulsa Zoo", detail: "Paid · Mostly outdoor · All ages", icon: "ZOO" },
-  { name: "Tulsa City-County Library", detail: "Free · Indoor · All ages", icon: "READ" },
-];
-
 const ageOptions = [
   { value: "all", label: "All ages", min: 0, max: 18 },
   { value: "baby", label: "Baby & toddler", min: 0, max: 3 },
@@ -285,8 +279,8 @@ export default function Home() {
           nook <em>&amp; roam</em>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#events">Find an outing</a>
-          <a href="#places">Places to go</a>
+          <a href="#events">Events</a>
+          <a href="/places">Places to go</a>
           <button className="saved-button" type="button" onClick={() => setShowSaved((value) => !value)}>
             <span aria-hidden="true">♡</span> Saved {favorites.length > 0 && `(${favorites.length})`}
           </button>
@@ -477,15 +471,16 @@ export default function Home() {
         <div className="places-intro">
           <p className="eyebrow">For spontaneous days</p>
           <h2 id="places-title">Nothing feels right?<br /><em>Try a place instead.</em></h2>
-          <p>Dependable family favorites that do not need a special event on the calendar.</p>
+          <p className="places-intro-copy">Dependable family favorites that do not need a special event on the calendar.</p>
+          <a className="places-directory-link" href="/places">Browse every place <span aria-hidden="true">→</span></a>
         </div>
         <div className="places-list">
-          {places.map((place) => (
-            <article className="place-card" key={place.name}>
+          {places.slice(0, 4).map((place) => (
+            <a className="place-card" href={place.url} target="_blank" rel="noreferrer" key={place.name} aria-label={`Visit the official ${place.name} site`}>
               <span className="place-icon" aria-hidden="true">{place.icon}</span>
               <div><h3>{place.name}</h3><p>{place.detail}</p></div>
-              <button type="button" aria-label={`View ${place.name}`}>→</button>
-            </article>
+              <span className="place-arrow" aria-hidden="true">↗</span>
+            </a>
           ))}
         </div>
       </section>
