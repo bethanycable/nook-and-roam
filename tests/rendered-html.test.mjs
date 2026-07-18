@@ -22,10 +22,12 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /<title>Nook &amp; Roam — Your weekend, sorted<\/title>/i);
   assert.match(html, /Your weekend,/);
   assert.match(html, /A few good ideas for your family/);
-  assert.match(html, /Nature Play Morning/);
+  assert.match(html, /Route 66 Festival: Tales of the Mother Road/);
+  assert.match(html, /74103 · Tulsa/);
+  assert.match(html, /Philbrook Dog Days/);
   assert.match(html, /Registration required/);
   assert.match(html, /Open the form/);
   assert.match(html, /Nothing feels right/);
-  assert.match(html, /representative demo data/);
+  assert.match(html, /Tulsa examples link to official organizer pages/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });

@@ -7,12 +7,12 @@ type EventItem = {
   title: string;
   venue: string;
   dateLabel: string;
-  dayGroup: "today" | "weekend" | "weekday";
+  dayGroups: Array<"today" | "weekend" | "weekday">;
   time: string;
   cost: string;
   isFree: boolean;
   setting: "Indoor" | "Outdoor";
-  registration: "Drop-in" | "Registration required";
+  registration: "Drop-in" | "Registration required" | "Advance ticket";
   registrationNote?: string;
   registrationUrl?: string;
   sourceUrl: string;
@@ -29,141 +29,145 @@ type EventItem = {
 const events: EventItem[] = [
   {
     id: 1,
-    title: "Nature Play Morning",
-    venue: "Lincoln Park Conservatory",
+    title: "Route 66 Festival: Tales of the Mother Road",
+    venue: "Gathering Place",
     dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "9:30–11:30 AM",
-    cost: "Free",
-    isFree: true,
-    setting: "Outdoor",
-    registration: "Drop-in",
-    sourceUrl: "https://www.chicagoparkdistrict.com/parks-facilities/lincoln-park-conservatory",
-    stroller: true,
-    ageLabel: "Best for ages 2–6",
-    ageMin: 2,
-    ageMax: 6,
-    driveMinutes: 8,
-    note: "Easygoing nature play with plenty of room for little legs and an early exit if needed.",
-    art: "art-garden",
-    badge: "Editor's pick",
-  },
-  {
-    id: 2,
-    title: "Let's Play for Neighborhood Families",
-    venue: "Queen of Angels School Courtyard",
-    dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "9:00–10:30 AM",
+    dayGroups: ["today", "weekend"],
+    time: "9:00 AM–7:00 PM",
     cost: "Free",
     isFree: true,
     setting: "Outdoor",
     registration: "Registration required",
-    registrationNote: "Spaces are limited, so families should register before arriving.",
-    registrationUrl: "https://www.queenofangelschicago.org/apps/forms2/?f=58131",
-    sourceUrl: "https://www.lincolnsquare.org/events/details/let-s-play-event-at-queen-of-angels-55117",
+    registrationNote: "Gathering Place asks families to claim a free festival ticket before arriving.",
+    registrationUrl: "https://www.eventbrite.com/e/gathering-place-presents-route-66-festival-tales-of-the-mother-road-tickets-1989843081221",
+    sourceUrl: "https://www.gatheringplace.org/default.aspx?p=218982",
     stroller: true,
-    ageLabel: "Best for ages 2–4",
-    ageMin: 2,
-    ageMax: 4,
-    driveMinutes: 14,
-    note: "A short morning of movement, art, and low-pressure play designed for toddlers and preschoolers with their grown-ups.",
-    art: "art-coral",
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 8,
+    note: "A come-and-go Tulsa celebration with morning youth programs, storytimes, activities, performances, food, and a vendor market.",
+    art: "art-garden",
     badge: "Registration link ready",
   },
   {
-    id: 3,
-    title: "Sunday Story House",
-    venue: "Harold Washington Library",
-    dateLabel: "SUN, JUL 19",
-    dayGroup: "weekend",
-    time: "2:00–3:00 PM",
+    id: 2,
+    title: "Summer Serenade",
+    venue: "Trinity Baptist Church",
+    dateLabel: "SAT, JUL 18",
+    dayGroups: ["today", "weekend"],
+    time: "11:00 AM–3:00 PM",
     cost: "Free",
     isFree: true,
     setting: "Indoor",
     registration: "Drop-in",
-    sourceUrl: "https://www.chipublib.org/locations/34/",
+    sourceUrl: "https://www.tamta.org/summer-serenade",
     stroller: true,
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 18,
-    note: "A reliable rainy-day option with a short program and space to linger afterward.",
-    art: "art-library",
-    badge: "Rainy-day ready",
+    driveMinutes: 10,
+    note: "A relaxed, all-ages student music showcase with used sheet music to browse; admission is free and donations are encouraged.",
+    art: "art-music",
+    badge: "Easy drop-in",
+  },
+  {
+    id: 3,
+    title: "Philbrook Dog Days",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "SUN, JUL 19",
+    dayGroups: ["weekend"],
+    time: "9:00 AM–5:00 PM",
+    cost: "Included with admission",
+    isFree: false,
+    setting: "Outdoor",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before your garden visit. Members and children 2 and under are free.",
+    registrationUrl: "https://my.philbrook.org/36669/36687",
+    sourceUrl: "https://www.philbrook.org/events/philbrook-dog-days-36862",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 11,
+    note: "A flexible garden stroll for families who want to bring a well-behaved, leashed dog; the dog-friendly portion stays outdoors.",
+    art: "art-garden",
+    badge: "Registration link ready",
   },
   {
     id: 4,
-    title: "RiverLab: Family Paddle",
-    venue: "River Park",
+    title: "Little Garden Explorers",
+    venue: "Philbrook Museum of Art",
     dateLabel: "WED, JUL 22",
-    dayGroup: "weekday",
-    time: "5:00–7:00 PM",
-    cost: "$5 per person",
+    dayGroups: ["weekday"],
+    time: "9:30–11:30 AM",
+    cost: "Included with admission",
     isFree: false,
     setting: "Outdoor",
-    registration: "Registration required",
-    registrationNote: "Advance registration includes equipment and basic instruction.",
-    registrationUrl: "https://anc.apm.activecommunities.com/chicagoparkdistrict/activity/search/detail/584143?onlineSiteId=0&from_original_cui=true",
-    sourceUrl: "https://www.chicagoparkdistrict.com/events/riverlab-family-paddle-river-6",
-    stroller: false,
-    ageLabel: "All ages with an adult",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before arriving. Members and children 2 and under are free.",
+    registrationUrl: "https://my.philbrook.org/36669/36688",
+    sourceUrl: "https://www.philbrook.org/events/little-garden-explorers-36770",
+    stroller: true,
+    ageLabel: "Best for ages 0–4",
     ageMin: 0,
-    ageMax: 18,
-    driveMinutes: 20,
-    note: "A guided, beginner-friendly paddle with equipment included; youth under 18 attend with an adult.",
-    art: "art-market",
+    ageMax: 4,
+    driveMinutes: 11,
+    note: "Come-and-go sensory garden play designed for children under 5, with digging, splashing, building, and room to explore at their pace.",
+    art: "art-coral",
     badge: "Registration link ready",
   },
   {
     id: 5,
-    title: "Green City Market at Lincoln Park",
-    venue: "Lincoln Park",
-    dateLabel: "SAT, JUL 18",
-    dayGroup: "today",
-    time: "7:00 AM–1:00 PM",
+    title: "Build A Reader Storytime: Family",
+    venue: "Zarrow Regional Library",
+    dateLabel: "WED, JUL 22",
+    dayGroups: ["weekday"],
+    time: "10:30–11:00 AM",
     cost: "Free",
     isFree: true,
-    setting: "Outdoor",
+    setting: "Indoor",
     registration: "Drop-in",
-    sourceUrl: "https://www.greencitymarket.org/calendar/",
+    sourceUrl: "https://events.tulsalibrary.org/event/16227317",
     stroller: true,
-    ageLabel: "All ages",
+    ageLabel: "Best for ages 0–5",
     ageMin: 0,
-    ageMax: 18,
-    driveMinutes: 7,
-    note: "A flexible, come-and-go market stop with local food, open space, and occasional children's programming.",
-    art: "art-garden",
-    badge: "Easy drop-in",
+    ageMax: 5,
+    driveMinutes: 12,
+    note: "A short family storytime with simple songs and books for little ones plus interactive stories and activities for older preschoolers.",
+    art: "art-library",
+    badge: "Rainy-day ready",
   },
   {
     id: 6,
-    title: "Kids' Concert on the Lawn",
-    venue: "Gallagher Way",
-    dateLabel: "WED, JUL 22",
-    dayGroup: "weekday",
-    time: "5:00–6:30 PM",
-    cost: "Free",
-    isFree: true,
+    title: "Storytime at Philbrook",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "THU, JUL 23",
+    dayGroups: ["weekday"],
+    time: "10:00–10:30 AM",
+    cost: "Included with admission",
+    isFree: false,
     setting: "Outdoor",
-    registration: "Drop-in",
-    sourceUrl: "https://www.gallagherway.com/events",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before arriving. The program may move indoors if the weather changes.",
+    registrationUrl: "https://my.philbrook.org/36669/36689",
+    sourceUrl: "https://www.philbrook.org/events/storytime-at-philbrook-36795",
     stroller: true,
-    ageLabel: "All ages",
+    ageLabel: "Best for ages 0–10",
     ageMin: 0,
-    ageMax: 18,
-    driveMinutes: 16,
-    note: "A flexible after-work plan where kids can move around and families can arrive or leave whenever they need.",
-    art: "art-music",
-    badge: "Easy weeknight",
+    ageMax: 10,
+    driveMinutes: 11,
+    note: "A compact weekly storytime geared toward kids 10 and under, with the museum and gardens available for a longer outing afterward.",
+    art: "art-library",
+    badge: "Registration link ready",
   },
 ];
 
 const places = [
-  { name: "Lincoln Park Zoo", detail: "Free · Outdoor · All ages", icon: "ZOO" },
-  { name: "Maggie Daley Park", detail: "Free · Outdoor · Stroller friendly", icon: "PLAY" },
-  { name: "Chicago Children's Museum", detail: "Paid · Indoor · Ages 1–10", icon: "MAKE" },
-  { name: "Garfield Park Conservatory", detail: "Free · Indoor · All ages", icon: "GROW" },
+  { name: "Gathering Place", detail: "Free · Outdoor · All ages", icon: "PLAY" },
+  { name: "Discovery Lab", detail: "Paid · Indoor · Ages 0–12", icon: "MAKE" },
+  { name: "Tulsa Zoo", detail: "Paid · Mostly outdoor · All ages", icon: "ZOO" },
+  { name: "Tulsa City-County Library", detail: "Free · Indoor · All ages", icon: "READ" },
 ];
 
 const ageOptions = [
@@ -175,8 +179,8 @@ const ageOptions = [
 ];
 
 export default function Home() {
-  const [zipInput, setZipInput] = useState("60614");
-  const [locationLabel, setLocationLabel] = useState("60614 · Chicago");
+  const [zipInput, setZipInput] = useState("74103");
+  const [locationLabel, setLocationLabel] = useState("74103 · Tulsa");
   const [locationError, setLocationError] = useState("");
   const [driveOffset, setDriveOffset] = useState(0);
   const [datePreset, setDatePreset] = useState<"weekend" | "today" | "weekday">("weekend");
@@ -192,12 +196,20 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("family-outing-favorites");
-    if (saved) setFavorites(JSON.parse(saved));
+    const saved = window.localStorage.getItem("nook-and-roam-favorites-v2");
+    if (!saved) return;
+    const loadSaved = window.setTimeout(() => {
+      try {
+        setFavorites(JSON.parse(saved));
+      } catch {
+        window.localStorage.removeItem("nook-and-roam-favorites-v2");
+      }
+    }, 0);
+    return () => window.clearTimeout(loadSaved);
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("family-outing-favorites", JSON.stringify(favorites));
+    window.localStorage.setItem("nook-and-roam-favorites-v2", JSON.stringify(favorites));
   }, [favorites]);
 
   useEffect(() => {
@@ -214,7 +226,7 @@ export default function Home() {
     return events.filter((event) => {
       const overlapsAge = event.ageMin <= selectedAge.max && event.ageMax >= selectedAge.min;
       return (
-        event.dayGroup === datePreset &&
+        event.dayGroups.includes(datePreset) &&
         overlapsAge &&
         (!freeOnly || event.isFree) &&
         (!indoorOnly || event.setting === "Indoor") &&
@@ -380,7 +392,7 @@ export default function Home() {
             <h2 id="events-title">A few good ideas for your family</h2>
           </div>
           <div className="results-meta">
-            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · sample listings</span>
+            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · Tulsa examples</span>
             {showSaved && <button type="button" onClick={() => setShowSaved(false)}>Show all events</button>}
           </div>
         </div>
@@ -424,8 +436,8 @@ export default function Home() {
                         target="_blank"
                         rel="noreferrer"
                       >
-                        <span>Registration required</span>
-                        Open the form <span aria-hidden="true">↗</span>
+                        <span>{event.registration}</span>
+                        {event.registration === "Advance ticket" ? "Open tickets" : "Open the form"} <span aria-hidden="true">↗</span>
                       </a>
                     )}
                     <div className="card-footer">
@@ -481,7 +493,7 @@ export default function Home() {
       <footer>
         <a className="wordmark footer-wordmark" href="#top">nook <em>&amp; roam</em></a>
         <p>Less searching. More going.</p>
-        <p className="prototype-note">OpenAI Build Week prototype · Listings shown are representative demo data.</p>
+        <p className="prototype-note">OpenAI Build Week prototype · Tulsa examples link to official organizer pages; verify details before leaving.</p>
       </footer>
 
       {selectedEvent && (
@@ -517,7 +529,7 @@ export default function Home() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Go to registration <span aria-hidden="true">↗</span>
+                  {selectedEvent.registration === "Advance ticket" ? "Go to tickets" : "Go to registration"} <span aria-hidden="true">↗</span>
                 </a>
               )}
               <button className="secondary-button" type="button" onClick={() => toggleFavorite(selectedEvent.id)}>
@@ -527,7 +539,9 @@ export default function Home() {
             <div className="source-row">
               <span>
                 {selectedEvent.registrationUrl
-                  ? "Registration happens on the organizer's site."
+                  ? selectedEvent.registration === "Advance ticket"
+                    ? "Tickets are selected on the organizer's site."
+                    : "Registration happens on the organizer's site."
                   : "No advance registration is listed for this event."}
               </span>
               <a href={selectedEvent.sourceUrl} target="_blank" rel="noreferrer">
