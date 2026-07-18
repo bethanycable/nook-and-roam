@@ -13,13 +13,13 @@ async function render() {
   );
 }
 
-test("server-renders the family outings experience", async () => {
+test("server-renders the Nook & Roam experience", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>Family Outings — Your weekend, sorted<\/title>/i);
+  assert.match(html, /<title>Nook &amp; Roam — Your weekend, sorted<\/title>/i);
   assert.match(html, /Your weekend,/);
   assert.match(html, /A few good ideas for your family/);
   assert.match(html, /Nature Play Morning/);

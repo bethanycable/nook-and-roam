@@ -1,6 +1,6 @@
-# Family Outings (working title)
+# Nook & Roam
 
-Family Outings is a warm, location-aware discovery experience for parents and families who are tired of checking venue calendars, social feeds, search results, and recommendation threads just to plan one afternoon.
+Nook & Roam is a warm, location-aware discovery experience for parents and families who are tired of checking venue calendars, social feeds, search results, and recommendation threads just to plan one afternoon.
 
 The prototype turns scattered event information into a concise shortlist that answers the practical questions first: Is it free? Indoors or outdoors? Do we need to register? Is it stroller friendly? Which ages will enjoy it? How long is the drive from our general area?
 

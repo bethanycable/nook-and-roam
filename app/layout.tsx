@@ -16,11 +16,11 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: new URL(origin),
-    title: "Family Outings — Your weekend, sorted",
+    title: "Nook & Roam — Your weekend, sorted",
     description: "A warm, practical way to find family-friendly events and places nearby.",
     openGraph: {
       title: "Your weekend, sorted.",
-      description: "Nearby family outings, distilled into the details parents actually need.",
+      description: "Nearby family plans, distilled into the details parents actually need.",
       type: "website",
       url: origin,
       images: [{ url: `${origin}/og.png`, width: 1536, height: 1024, alt: "Your weekend, sorted." }],
@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: "Your weekend, sorted.",
-      description: "Nearby family outings, distilled into the details parents actually need.",
+      description: "Nearby family plans, distilled into the details parents actually need.",
       images: [`${origin}/og.png`],
     },
   };

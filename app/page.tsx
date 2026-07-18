@@ -256,8 +256,8 @@ export default function Home() {
   return (
     <main>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Family outings home">
-          family <em>outings</em>
+        <a className="wordmark" href="#top" aria-label="Nook and Roam home">
+          nook <em>&amp; roam</em>
         </a>
         <nav aria-label="Primary navigation">
           <a href="#events">Find an outing</a>
@@ -455,7 +455,7 @@ export default function Home() {
       </section>
 
       <footer>
-        <a className="wordmark footer-wordmark" href="#top">family <em>outings</em></a>
+        <a className="wordmark footer-wordmark" href="#top">nook <em>&amp; roam</em></a>
         <p>Less searching. More going.</p>
         <p className="prototype-note">OpenAI Build Week prototype · Listings shown are representative demo data.</p>
       </footer>
