@@ -2,12 +2,13 @@
 
 Nook & Roam is a warm, location-aware discovery experience for parents and families who are tired of checking venue calendars, social feeds, search results, and recommendation threads just to plan one afternoon.
 
-The prototype turns scattered event information into a concise shortlist that answers the practical questions first: Is it free? Indoors or outdoors? Do we need to register? Is it stroller friendly? Which ages will enjoy it? How long is the drive from our general area?
+The prototype turns scattered event information into a concise shortlist that answers the practical questions first: Is it free? Indoors or outdoors? Do we need to register? Is it stroller friendly? Which ages will enjoy it? How long is the drive from our general area? When registration is required, the event card and detail view link directly to the organizer's registration form.
 
 ## What the prototype does
 
 - Curates nearby event cards from a ZIP code or browser-provided general location.
 - Filters by timing, age group, cost, indoor setting, stroller access, and registration requirements.
+- Distinguishes drop-in events from registration-required events and provides direct registration links.
 - Estimates drive time from the selected general area.
 - Saves promising ideas on the device for later.
 - Explains why each event may fit a family instead of repeating promotional copy.
@@ -25,7 +26,7 @@ The prototype turns scattered event information into a concise shortlist that an
 
 Codex was used throughout the core build to translate a parent-centered problem into the product scope, normalize the event information model, design the responsive interaction system, implement filtering and location behavior, and validate the production build. GPT-5.6 supported the reasoning that separates essential family logistics from noisy source descriptions and shaped the concise “why it fits” summaries.
 
-In a live-data version, GPT-5.6 would enrich and normalize sourced event records into a consistent schema while preserving the original source URL and confidence for human review. It would never invent a missing accessibility, price, or registration fact; unknown information would remain visibly unknown.
+In a live-data version, GPT-5.6 would enrich and normalize sourced event records into a consistent schema while preserving the original source URL, direct registration URL, retrieval time, and confidence for human review. It would never invent a missing accessibility, price, or registration fact; unknown information would remain visibly unknown.
 
 ## Live-data roadmap
 
@@ -36,7 +37,15 @@ The hackathon prototype uses representative listings so the core decision experi
 3. Deduplicate listings by venue, time, title similarity, and source priority.
 4. Use GPT-5.6 to extract and normalize price, setting, registration, accessibility, and age guidance.
 5. Flag low-confidence or conflicting fields for review instead of guessing.
-6. Rank results by family preferences, distance, timing, and information completeness.
+6. Store normalized events, venues, sources, and registration links in a relational database.
+7. Rank results by family preferences, distance, timing, and information completeness.
+
+## Deliberate prototype boundaries
+
+- Event discovery currently uses a small demo dataset rather than an unrestricted web crawler.
+- Saved events stay on the current device. Production accounts would store user-owned saves and preferences in a database so they work across devices.
+- The production ingestion system should prioritize official APIs, feeds, and organizer calendars; respect source terms and crawl limits; retain provenance; and send ambiguous records to review.
+- Public sign-in and durable saved events are planned after the submission build so the hackathon demo remains focused on the core family decision experience.
 
 ## Run locally
 

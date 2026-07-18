@@ -23,6 +23,8 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /Your weekend,/);
   assert.match(html, /A few good ideas for your family/);
   assert.match(html, /Nature Play Morning/);
+  assert.match(html, /Registration required/);
+  assert.match(html, /Open the form/);
   assert.match(html, /Nothing feels right/);
   assert.match(html, /representative demo data/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);

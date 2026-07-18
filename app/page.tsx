@@ -12,7 +12,10 @@ type EventItem = {
   cost: string;
   isFree: boolean;
   setting: "Indoor" | "Outdoor";
-  registration: "Drop-in" | "Register ahead";
+  registration: "Drop-in" | "Registration required";
+  registrationNote?: string;
+  registrationUrl?: string;
+  sourceUrl: string;
   stroller: boolean;
   ageLabel: string;
   ageMin: number;
@@ -35,6 +38,7 @@ const events: EventItem[] = [
     isFree: true,
     setting: "Outdoor",
     registration: "Drop-in",
+    sourceUrl: "https://www.chicagoparkdistrict.com/parks-facilities/lincoln-park-conservatory",
     stroller: true,
     ageLabel: "Best for ages 2–6",
     ageMin: 2,
@@ -46,23 +50,26 @@ const events: EventItem[] = [
   },
   {
     id: 2,
-    title: "Family Art Lab",
-    venue: "Museum of Contemporary Art",
+    title: "Let's Play for Neighborhood Families",
+    venue: "Queen of Angels School Courtyard",
     dateLabel: "SAT, JUL 18",
     dayGroup: "weekend",
-    time: "11:00 AM–1:00 PM",
-    cost: "$10 family pass",
-    isFree: false,
-    setting: "Indoor",
-    registration: "Register ahead",
+    time: "9:00–10:30 AM",
+    cost: "Free",
+    isFree: true,
+    setting: "Outdoor",
+    registration: "Registration required",
+    registrationNote: "Spaces are limited, so families should register before arriving.",
+    registrationUrl: "https://www.queenofangelschicago.org/apps/forms2/?f=58131",
+    sourceUrl: "https://www.lincolnsquare.org/events/details/let-s-play-event-at-queen-of-angels-55117",
     stroller: true,
-    ageLabel: "Best for ages 4–10",
-    ageMin: 4,
-    ageMax: 10,
+    ageLabel: "Best for ages 2–4",
+    ageMin: 2,
+    ageMax: 4,
     driveMinutes: 14,
-    note: "A hands-on art session that works well for mixed ages and gives grown-ups something to enjoy too.",
+    note: "A short morning of movement, art, and low-pressure play designed for toddlers and preschoolers with their grown-ups.",
     art: "art-coral",
-    badge: "Low-key favorite",
+    badge: "Registration link ready",
   },
   {
     id: 3,
@@ -75,6 +82,7 @@ const events: EventItem[] = [
     isFree: true,
     setting: "Indoor",
     registration: "Drop-in",
+    sourceUrl: "https://www.chipublib.org/locations/34/",
     stroller: true,
     ageLabel: "All ages",
     ageMin: 0,
@@ -86,43 +94,47 @@ const events: EventItem[] = [
   },
   {
     id: 4,
-    title: "Little Chefs: Summer Picnic",
-    venue: "Green City Market",
-    dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "10:00–11:00 AM",
-    cost: "$8 per child",
+    title: "RiverLab: Family Paddle",
+    venue: "River Park",
+    dateLabel: "WED, JUL 22",
+    dayGroup: "weekday",
+    time: "5:00–7:00 PM",
+    cost: "$5 per person",
     isFree: false,
     setting: "Outdoor",
-    registration: "Register ahead",
-    stroller: true,
-    ageLabel: "Best for ages 5–9",
-    ageMin: 5,
-    ageMax: 9,
-    driveMinutes: 11,
-    note: "A structured activity for kids who like to make things, plus an easy market stroll for everyone else.",
+    registration: "Registration required",
+    registrationNote: "Advance registration includes equipment and basic instruction.",
+    registrationUrl: "https://anc.apm.activecommunities.com/chicagoparkdistrict/activity/search/detail/584143?onlineSiteId=0&from_original_cui=true",
+    sourceUrl: "https://www.chicagoparkdistrict.com/events/riverlab-family-paddle-river-6",
+    stroller: false,
+    ageLabel: "All ages with an adult",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 20,
+    note: "A guided, beginner-friendly paddle with equipment included; youth under 18 attend with an adult.",
     art: "art-market",
-    badge: "Hands-on",
+    badge: "Registration link ready",
   },
   {
     id: 5,
-    title: "Firefly Walk",
-    venue: "North Park Village Nature Center",
-    dateLabel: "FRI, JUL 17",
+    title: "Green City Market at Lincoln Park",
+    venue: "Lincoln Park",
+    dateLabel: "SAT, JUL 18",
     dayGroup: "today",
-    time: "7:30–8:30 PM",
+    time: "7:00 AM–1:00 PM",
     cost: "Free",
     isFree: true,
     setting: "Outdoor",
-    registration: "Register ahead",
-    stroller: false,
-    ageLabel: "Best for ages 6–12",
-    ageMin: 6,
-    ageMax: 12,
-    driveMinutes: 24,
-    note: "A special after-dinner adventure for older kids who can manage an unpaved twilight trail.",
-    art: "art-night",
-    badge: "Worth staying up",
+    registration: "Drop-in",
+    sourceUrl: "https://www.greencitymarket.org/calendar/",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 7,
+    note: "A flexible, come-and-go market stop with local food, open space, and occasional children's programming.",
+    art: "art-garden",
+    badge: "Easy drop-in",
   },
   {
     id: 6,
@@ -135,6 +147,7 @@ const events: EventItem[] = [
     isFree: true,
     setting: "Outdoor",
     registration: "Drop-in",
+    sourceUrl: "https://www.gallagherway.com/events",
     stroller: true,
     ageLabel: "All ages",
     ageMin: 0,
@@ -401,9 +414,20 @@ export default function Home() {
                       <span>{event.cost}</span>
                       <span>{event.setting}</span>
                       <span>{event.registration}</span>
-                      <span>{event.stroller ? "Stroller friendly" : "Carrier recommended"}</span>
+                      <span>{event.stroller ? "Stroller friendly" : "Not stroller friendly"}</span>
                       <span className="age-detail">{event.ageLabel}</span>
                     </div>
+                    {event.registrationUrl && (
+                      <a
+                        className="card-registration"
+                        href={event.registrationUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <span>Registration required</span>
+                        Open the form <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
                     <div className="card-footer">
                       <span>From {locationLabel.split(" · ")[0]}</span>
                       <strong>{driveTime} min drive</strong>
@@ -474,16 +498,41 @@ export default function Home() {
             <dl>
               <div><dt>Cost</dt><dd>{selectedEvent.cost}</dd></div>
               <div><dt>Setting</dt><dd>{selectedEvent.setting}</dd></div>
-              <div><dt>Planning</dt><dd>{selectedEvent.registration}</dd></div>
+              <div>
+                <dt>Planning</dt>
+                <dd>
+                  {selectedEvent.registration}
+                  {selectedEvent.registrationNote && <small>{selectedEvent.registrationNote}</small>}
+                </dd>
+              </div>
               <div><dt>Age fit</dt><dd>{selectedEvent.ageLabel}</dd></div>
-              <div><dt>Getting around</dt><dd>{selectedEvent.stroller ? "Stroller friendly" : "Carrier recommended"}</dd></div>
+              <div><dt>Getting around</dt><dd>{selectedEvent.stroller ? "Stroller friendly" : "Not stroller friendly"}</dd></div>
               <div><dt>From your area</dt><dd>{Math.max(5, selectedEvent.driveMinutes + driveOffset)} min drive</dd></div>
             </dl>
             <div className="modal-actions">
-              <button className="primary-button" type="button" onClick={() => toggleFavorite(selectedEvent.id)}>
+              {selectedEvent.registrationUrl && (
+                <a
+                  className="primary-button"
+                  href={selectedEvent.registrationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Go to registration <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              <button className="secondary-button" type="button" onClick={() => toggleFavorite(selectedEvent.id)}>
                 {favorites.includes(selectedEvent.id) ? "Saved to your list" : "Save this idea"}
               </button>
-              <span>Source link available when live feeds are connected.</span>
+            </div>
+            <div className="source-row">
+              <span>
+                {selectedEvent.registrationUrl
+                  ? "Registration happens on the organizer's site."
+                  : "No advance registration is listed for this event."}
+              </span>
+              <a href={selectedEvent.sourceUrl} target="_blank" rel="noreferrer">
+                View official source <span aria-hidden="true">↗</span>
+              </a>
             </div>
           </section>
         </div>
