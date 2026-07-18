@@ -29,6 +29,9 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /Change ZIP/);
   assert.match(html, /Update area/);
   assert.match(html, /Philbrook Dog Days/);
+  assert.match(html, /Oklahoma! \+ The Dustbowl Radio Hour Preview/);
+  assert.match(html, /9(?:<!--.*?-->|\s)*matches(?:<!--.*?-->|\s)*·(?:<!--.*?-->|\s)*9(?:<!--.*?-->|\s)*Tulsa examples/);
+  assert.match(html, /Show(?:<!--.*?-->|\s)*3(?:<!--.*?-->|\s)*more ideas/);
   assert.match(html, /Registration required/);
   assert.match(html, /Open the form/);
   assert.match(html, /Nothing feels right/);

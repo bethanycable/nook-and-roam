@@ -73,6 +73,29 @@ const events: EventItem[] = [
     badge: "Easy drop-in",
   },
   {
+    id: 7,
+    title: "Oklahoma! + The Dustbowl Radio Hour Preview",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "SAT, JUL 18",
+    dayGroups: ["today", "weekend"],
+    time: "12:30–1:30 PM",
+    cost: "Included with admission",
+    isFree: false,
+    setting: "Indoor",
+    registration: "Advance ticket",
+    registrationNote: "Reserve timed general admission for Saturday. Auditorium seating for the preview is first come, first served.",
+    registrationUrl: "https://my.philbrook.org/36669/36686",
+    sourceUrl: "https://www.philbrook.org/events/preview-of-tpac-produces-rodgers-hammerstein-s-oklahoma-ft-the-dustbowl-radio-hour-a-new-musical-37122",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 11,
+    note: "A one-hour indoor music preview from the casts of Oklahoma! and The Dustbowl Radio Hour, with time to explore Philbrook before or after.",
+    art: "art-music",
+    badge: "Indoor music pick",
+  },
+  {
     id: 3,
     title: "Philbrook Dog Days",
     venue: "Philbrook Museum of Art",
@@ -140,6 +163,29 @@ const events: EventItem[] = [
     badge: "Rainy-day ready",
   },
   {
+    id: 8,
+    title: "Camp Guthrie: Story Stones",
+    venue: "Guthrie Green",
+    dateLabel: "WED, JUL 22",
+    dayGroups: ["weekday"],
+    time: "10:00–11:00 AM",
+    cost: "Free",
+    isFree: true,
+    setting: "Outdoor",
+    registration: "Registration required",
+    registrationNote: "Reserve a free spot through Guthrie Green's event form. Children must stay with an adult.",
+    registrationUrl: "https://guthriegreeneventscalendar.eventcalendarapp.com/camp-guthrie-reading",
+    sourceUrl: "https://www.guthriegreen.com/camp-guthrie",
+    stroller: true,
+    ageLabel: "Best for ages 4–12",
+    ageMin: 4,
+    ageMax: 12,
+    driveMinutes: 3,
+    note: "A free literacy session where kids paint characters, objects, or scenes on smooth stones and use them to build a story.",
+    art: "art-coral",
+    badge: "Free registration",
+  },
+  {
     id: 6,
     title: "Storytime at Philbrook",
     venue: "Philbrook Museum of Art",
@@ -162,7 +208,32 @@ const events: EventItem[] = [
     art: "art-library",
     badge: "Registration link ready",
   },
+  {
+    id: 9,
+    title: "Fish Feeding at Philbrook",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "THU, JUL 23",
+    dayGroups: ["weekday"],
+    time: "10:30–10:45 AM",
+    cost: "Included with admission",
+    isFree: false,
+    setting: "Outdoor",
+    registration: "Advance ticket",
+    registrationNote: "Choose timed general admission for Thursday. The outdoor feeding may be canceled for inclement weather.",
+    registrationUrl: "https://my.philbrook.org/36669/36689",
+    sourceUrl: "https://www.philbrook.org/events/fish-feeding-36817",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 11,
+    note: "A quick look at Philbrook's koi during feeding time that pairs naturally with Storytime, the gardens, or a museum visit.",
+    art: "art-garden",
+    badge: "Quick add-on",
+  },
 ];
+
+const eventPreviewLimit = 6;
 
 const ageOptions = [
   { value: "all", label: "All ages", min: 0, max: 18 },
@@ -177,7 +248,7 @@ export default function Home() {
   const [locationLabel, setLocationLabel] = useState("74103 · Tulsa");
   const [locationError, setLocationError] = useState("");
   const [driveOffset, setDriveOffset] = useState(0);
-  const [datePreset, setDatePreset] = useState<"weekend" | "today" | "weekday">("weekend");
+  const [datePreset, setDatePreset] = useState<"upcoming" | "weekend" | "today" | "weekday">("upcoming");
   const [age, setAge] = useState("little");
   const [freeOnly, setFreeOnly] = useState(false);
   const [indoorOnly, setIndoorOnly] = useState(false);
@@ -220,7 +291,7 @@ export default function Home() {
     return events.filter((event) => {
       const overlapsAge = event.ageMin <= selectedAge.max && event.ageMax >= selectedAge.min;
       return (
-        event.dayGroups.includes(datePreset) &&
+        (datePreset === "upcoming" || event.dayGroups.includes(datePreset)) &&
         overlapsAge &&
         (!freeOnly || event.isFree) &&
         (!indoorOnly || event.setting === "Indoor") &&
@@ -231,7 +302,7 @@ export default function Home() {
     });
   }, [age, datePreset, dropInOnly, favorites, freeOnly, indoorOnly, showSaved, strollerOnly]);
 
-  const displayedEvents = showAll ? filteredEvents : filteredEvents.slice(0, 3);
+  const displayedEvents = showAll ? filteredEvents : filteredEvents.slice(0, eventPreviewLimit);
 
   function submitLocation(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -273,7 +344,7 @@ export default function Home() {
   }
 
   function resetEventView() {
-    setDatePreset("weekend");
+    setDatePreset("upcoming");
     setAge("little");
     setFreeOnly(false);
     setIndoorOnly(false);
@@ -346,6 +417,7 @@ export default function Home() {
       <section className="filter-section" aria-label="Event filters">
         <div className="quick-filters">
           {([
+            ["upcoming", "Upcoming"],
             ["weekend", "This weekend"],
             ["today", "Today"],
             ["weekday", "During the week"],
@@ -400,7 +472,7 @@ export default function Home() {
             <h2 id="events-title">A few good ideas for your family</h2>
           </div>
           <div className="results-meta">
-            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · Tulsa examples</span>
+            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · {events.length} Tulsa examples</span>
             {showSaved && <button type="button" onClick={() => setShowSaved(false)}>Show all events</button>}
           </div>
         </div>
@@ -474,9 +546,9 @@ export default function Home() {
           </div>
         )}
 
-        {!showAll && filteredEvents.length > 3 && (
+        {!showAll && filteredEvents.length > eventPreviewLimit && (
           <button className="show-more" type="button" onClick={() => setShowAll(true)}>
-            Show {filteredEvents.length - 3} more ideas
+            Show {filteredEvents.length - eventPreviewLimit} more ideas
           </button>
         )}
       </section>
