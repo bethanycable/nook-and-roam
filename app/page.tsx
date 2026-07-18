@@ -1,18 +1,22 @@
 "use client";
 
 import { FormEvent, MouseEvent, useEffect, useMemo, useState } from "react";
+import { places } from "./places-data";
 
 type EventItem = {
   id: number;
   title: string;
   venue: string;
   dateLabel: string;
-  dayGroup: "today" | "weekend" | "weekday";
+  dayGroups: Array<"today" | "weekend" | "weekday">;
   time: string;
   cost: string;
   isFree: boolean;
   setting: "Indoor" | "Outdoor";
-  registration: "Drop-in" | "Register ahead";
+  registration: "Drop-in" | "Registration required" | "Advance ticket";
+  registrationNote?: string;
+  registrationUrl?: string;
+  sourceUrl: string;
   stroller: boolean;
   ageLabel: string;
   ageMin: number;
@@ -26,131 +30,138 @@ type EventItem = {
 const events: EventItem[] = [
   {
     id: 1,
-    title: "Nature Play Morning",
-    venue: "Lincoln Park Conservatory",
+    title: "Route 66 Festival: Tales of the Mother Road",
+    venue: "Gathering Place",
     dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "9:30–11:30 AM",
+    dayGroups: ["today", "weekend"],
+    time: "9:00 AM–7:00 PM",
     cost: "Free",
     isFree: true,
     setting: "Outdoor",
-    registration: "Drop-in",
-    stroller: true,
-    ageLabel: "Best for ages 2–6",
-    ageMin: 2,
-    ageMax: 6,
-    driveMinutes: 8,
-    note: "Easygoing nature play with plenty of room for little legs and an early exit if needed.",
-    art: "art-garden",
-    badge: "Editor's pick",
-  },
-  {
-    id: 2,
-    title: "Family Art Lab",
-    venue: "Museum of Contemporary Art",
-    dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "11:00 AM–1:00 PM",
-    cost: "$10 family pass",
-    isFree: false,
-    setting: "Indoor",
-    registration: "Register ahead",
-    stroller: true,
-    ageLabel: "Best for ages 4–10",
-    ageMin: 4,
-    ageMax: 10,
-    driveMinutes: 14,
-    note: "A hands-on art session that works well for mixed ages and gives grown-ups something to enjoy too.",
-    art: "art-coral",
-    badge: "Low-key favorite",
-  },
-  {
-    id: 3,
-    title: "Sunday Story House",
-    venue: "Harold Washington Library",
-    dateLabel: "SUN, JUL 19",
-    dayGroup: "weekend",
-    time: "2:00–3:00 PM",
-    cost: "Free",
-    isFree: true,
-    setting: "Indoor",
-    registration: "Drop-in",
+    registration: "Registration required",
+    registrationNote: "Gathering Place asks families to claim a free festival ticket before arriving.",
+    registrationUrl: "https://www.eventbrite.com/e/gathering-place-presents-route-66-festival-tales-of-the-mother-road-tickets-1989843081221",
+    sourceUrl: "https://www.gatheringplace.org/default.aspx?p=218982",
     stroller: true,
     ageLabel: "All ages",
     ageMin: 0,
     ageMax: 18,
-    driveMinutes: 18,
-    note: "A reliable rainy-day option with a short program and space to linger afterward.",
+    driveMinutes: 8,
+    note: "A come-and-go Tulsa celebration with morning youth programs, storytimes, activities, performances, food, and a vendor market.",
+    art: "art-garden",
+    badge: "Registration link ready",
+  },
+  {
+    id: 2,
+    title: "Summer Serenade",
+    venue: "Trinity Baptist Church",
+    dateLabel: "SAT, JUL 18",
+    dayGroups: ["today", "weekend"],
+    time: "11:00 AM–3:00 PM",
+    cost: "Free",
+    isFree: true,
+    setting: "Indoor",
+    registration: "Drop-in",
+    sourceUrl: "https://www.tamta.org/summer-serenade",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 10,
+    note: "A relaxed, all-ages student music showcase with used sheet music to browse; admission is free and donations are encouraged.",
+    art: "art-music",
+    badge: "Easy drop-in",
+  },
+  {
+    id: 3,
+    title: "Philbrook Dog Days",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "SUN, JUL 19",
+    dayGroups: ["weekend"],
+    time: "9:00 AM–5:00 PM",
+    cost: "Included with admission",
+    isFree: false,
+    setting: "Outdoor",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before your garden visit. Members and children 2 and under are free.",
+    registrationUrl: "https://my.philbrook.org/36669/36687",
+    sourceUrl: "https://www.philbrook.org/events/philbrook-dog-days-36862",
+    stroller: true,
+    ageLabel: "All ages",
+    ageMin: 0,
+    ageMax: 18,
+    driveMinutes: 11,
+    note: "A flexible garden stroll for families who want to bring a well-behaved, leashed dog; the dog-friendly portion stays outdoors.",
+    art: "art-garden",
+    badge: "Registration link ready",
+  },
+  {
+    id: 4,
+    title: "Little Garden Explorers",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "WED, JUL 22",
+    dayGroups: ["weekday"],
+    time: "9:30–11:30 AM",
+    cost: "Included with admission",
+    isFree: false,
+    setting: "Outdoor",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before arriving. Members and children 2 and under are free.",
+    registrationUrl: "https://my.philbrook.org/36669/36688",
+    sourceUrl: "https://www.philbrook.org/events/little-garden-explorers-36770",
+    stroller: true,
+    ageLabel: "Best for ages 0–4",
+    ageMin: 0,
+    ageMax: 4,
+    driveMinutes: 11,
+    note: "Come-and-go sensory garden play designed for children under 5, with digging, splashing, building, and room to explore at their pace.",
+    art: "art-coral",
+    badge: "Registration link ready",
+  },
+  {
+    id: 5,
+    title: "Build A Reader Storytime: Family",
+    venue: "Zarrow Regional Library",
+    dateLabel: "WED, JUL 22",
+    dayGroups: ["weekday"],
+    time: "10:30–11:00 AM",
+    cost: "Free",
+    isFree: true,
+    setting: "Indoor",
+    registration: "Drop-in",
+    sourceUrl: "https://events.tulsalibrary.org/event/16227317",
+    stroller: true,
+    ageLabel: "Best for ages 0–5",
+    ageMin: 0,
+    ageMax: 5,
+    driveMinutes: 12,
+    note: "A short family storytime with simple songs and books for little ones plus interactive stories and activities for older preschoolers.",
     art: "art-library",
     badge: "Rainy-day ready",
   },
   {
-    id: 4,
-    title: "Little Chefs: Summer Picnic",
-    venue: "Green City Market",
-    dateLabel: "SAT, JUL 18",
-    dayGroup: "weekend",
-    time: "10:00–11:00 AM",
-    cost: "$8 per child",
+    id: 6,
+    title: "Storytime at Philbrook",
+    venue: "Philbrook Museum of Art",
+    dateLabel: "THU, JUL 23",
+    dayGroups: ["weekday"],
+    time: "10:00–10:30 AM",
+    cost: "Included with admission",
     isFree: false,
     setting: "Outdoor",
-    registration: "Register ahead",
+    registration: "Advance ticket",
+    registrationNote: "Choose a timed general-admission entry before arriving. The program may move indoors if the weather changes.",
+    registrationUrl: "https://my.philbrook.org/36669/36689",
+    sourceUrl: "https://www.philbrook.org/events/storytime-at-philbrook-36795",
     stroller: true,
-    ageLabel: "Best for ages 5–9",
-    ageMin: 5,
-    ageMax: 9,
-    driveMinutes: 11,
-    note: "A structured activity for kids who like to make things, plus an easy market stroll for everyone else.",
-    art: "art-market",
-    badge: "Hands-on",
-  },
-  {
-    id: 5,
-    title: "Firefly Walk",
-    venue: "North Park Village Nature Center",
-    dateLabel: "FRI, JUL 17",
-    dayGroup: "today",
-    time: "7:30–8:30 PM",
-    cost: "Free",
-    isFree: true,
-    setting: "Outdoor",
-    registration: "Register ahead",
-    stroller: false,
-    ageLabel: "Best for ages 6–12",
-    ageMin: 6,
-    ageMax: 12,
-    driveMinutes: 24,
-    note: "A special after-dinner adventure for older kids who can manage an unpaved twilight trail.",
-    art: "art-night",
-    badge: "Worth staying up",
-  },
-  {
-    id: 6,
-    title: "Kids' Concert on the Lawn",
-    venue: "Gallagher Way",
-    dateLabel: "WED, JUL 22",
-    dayGroup: "weekday",
-    time: "5:00–6:30 PM",
-    cost: "Free",
-    isFree: true,
-    setting: "Outdoor",
-    registration: "Drop-in",
-    stroller: true,
-    ageLabel: "All ages",
+    ageLabel: "Best for ages 0–10",
     ageMin: 0,
-    ageMax: 18,
-    driveMinutes: 16,
-    note: "A flexible after-work plan where kids can move around and families can arrive or leave whenever they need.",
-    art: "art-music",
-    badge: "Easy weeknight",
+    ageMax: 10,
+    driveMinutes: 11,
+    note: "A compact weekly storytime geared toward kids 10 and under, with the museum and gardens available for a longer outing afterward.",
+    art: "art-library",
+    badge: "Registration link ready",
   },
-];
-
-const places = [
-  { name: "Lincoln Park Zoo", detail: "Free · Outdoor · All ages", icon: "ZOO" },
-  { name: "Maggie Daley Park", detail: "Free · Outdoor · Stroller friendly", icon: "PLAY" },
-  { name: "Chicago Children's Museum", detail: "Paid · Indoor · Ages 1–10", icon: "MAKE" },
-  { name: "Garfield Park Conservatory", detail: "Free · Indoor · All ages", icon: "GROW" },
 ];
 
 const ageOptions = [
@@ -162,8 +173,8 @@ const ageOptions = [
 ];
 
 export default function Home() {
-  const [zipInput, setZipInput] = useState("60614");
-  const [locationLabel, setLocationLabel] = useState("60614 · Chicago");
+  const [zipInput, setZipInput] = useState("74103");
+  const [locationLabel, setLocationLabel] = useState("74103 · Tulsa");
   const [locationError, setLocationError] = useState("");
   const [driveOffset, setDriveOffset] = useState(0);
   const [datePreset, setDatePreset] = useState<"weekend" | "today" | "weekday">("weekend");
@@ -179,12 +190,20 @@ export default function Home() {
   const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
 
   useEffect(() => {
-    const saved = window.localStorage.getItem("family-outing-favorites");
-    if (saved) setFavorites(JSON.parse(saved));
+    const saved = window.localStorage.getItem("nook-and-roam-favorites-v2");
+    if (!saved) return;
+    const loadSaved = window.setTimeout(() => {
+      try {
+        setFavorites(JSON.parse(saved));
+      } catch {
+        window.localStorage.removeItem("nook-and-roam-favorites-v2");
+      }
+    }, 0);
+    return () => window.clearTimeout(loadSaved);
   }, []);
 
   useEffect(() => {
-    window.localStorage.setItem("family-outing-favorites", JSON.stringify(favorites));
+    window.localStorage.setItem("nook-and-roam-favorites-v2", JSON.stringify(favorites));
   }, [favorites]);
 
   useEffect(() => {
@@ -201,7 +220,7 @@ export default function Home() {
     return events.filter((event) => {
       const overlapsAge = event.ageMin <= selectedAge.max && event.ageMax >= selectedAge.min;
       return (
-        event.dayGroup === datePreset &&
+        event.dayGroups.includes(datePreset) &&
         overlapsAge &&
         (!freeOnly || event.isFree) &&
         (!indoorOnly || event.setting === "Indoor") &&
@@ -253,16 +272,28 @@ export default function Home() {
     if (event.target === event.currentTarget) setSelectedEvent(null);
   }
 
+  function resetEventView() {
+    setDatePreset("weekend");
+    setAge("little");
+    setFreeOnly(false);
+    setIndoorOnly(false);
+    setStrollerOnly(false);
+    setDropInOnly(false);
+    setShowFilters(false);
+    setShowAll(false);
+    setShowSaved(false);
+  }
+
   return (
     <main>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Nook and Roam home">
+        <a className="wordmark" href="#top" aria-label="Nook and Roam home" onClick={resetEventView}>
           nook <em>&amp; roam</em>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#events">Find an outing</a>
-          <a href="#places">Places to go</a>
-          <button className="saved-button" type="button" onClick={() => setShowSaved((value) => !value)}>
+          <a href="#events" onClick={resetEventView}>Events</a>
+          <a href="/places">Places to go</a>
+          <button className="saved-button" type="button" aria-pressed={showSaved} onClick={() => setShowSaved((value) => !value)}>
             <span aria-hidden="true">♡</span> Saved {favorites.length > 0 && `(${favorites.length})`}
           </button>
         </nav>
@@ -295,17 +326,19 @@ export default function Home() {
           </div>
         </div>
         <form onSubmit={submitLocation} className="zip-form">
-          <label className="sr-only" htmlFor="zip">ZIP code</label>
-          <input
-            id="zip"
-            inputMode="numeric"
-            maxLength={5}
-            value={zipInput}
-            onChange={(event) => setZipInput(event.target.value)}
-            placeholder="ZIP code"
-          />
-          <span className="drive-limit">Within a 30-minute drive</span>
-          <button className="primary-button" type="submit">Find family fun</button>
+          <label className="zip-control" htmlFor="zip">
+            <span className="field-label">Change ZIP</span>
+            <input
+              id="zip"
+              inputMode="numeric"
+              maxLength={5}
+              value={zipInput}
+              onChange={(event) => setZipInput(event.target.value)}
+              placeholder="ZIP code"
+            />
+          </label>
+          <span className="drive-limit">Showing ideas within about a 30-minute drive.</span>
+          <button className="primary-button" type="submit">Update area</button>
         </form>
       </section>
       {locationError && <p className="location-message" role="status">{locationError}</p>}
@@ -367,7 +400,7 @@ export default function Home() {
             <h2 id="events-title">A few good ideas for your family</h2>
           </div>
           <div className="results-meta">
-            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · sample listings</span>
+            <span>{filteredEvents.length} {filteredEvents.length === 1 ? "match" : "matches"} · Tulsa examples</span>
             {showSaved && <button type="button" onClick={() => setShowSaved(false)}>Show all events</button>}
           </div>
         </div>
@@ -401,9 +434,20 @@ export default function Home() {
                       <span>{event.cost}</span>
                       <span>{event.setting}</span>
                       <span>{event.registration}</span>
-                      <span>{event.stroller ? "Stroller friendly" : "Carrier recommended"}</span>
+                      <span>{event.stroller ? "Stroller friendly" : "Not stroller friendly"}</span>
                       <span className="age-detail">{event.ageLabel}</span>
                     </div>
+                    {event.registrationUrl && (
+                      <a
+                        className="card-registration"
+                        href={event.registrationUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        <span>{event.registration}</span>
+                        {event.registration === "Advance ticket" ? "Open tickets" : "Open the form"} <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
                     <div className="card-footer">
                       <span>From {locationLabel.split(" · ")[0]}</span>
                       <strong>{driveTime} min drive</strong>
@@ -441,15 +485,16 @@ export default function Home() {
         <div className="places-intro">
           <p className="eyebrow">For spontaneous days</p>
           <h2 id="places-title">Nothing feels right?<br /><em>Try a place instead.</em></h2>
-          <p>Dependable family favorites that do not need a special event on the calendar.</p>
+          <p className="places-intro-copy">Dependable family favorites that do not need a special event on the calendar.</p>
+          <a className="places-directory-link" href="/places">Browse every place <span aria-hidden="true">→</span></a>
         </div>
         <div className="places-list">
-          {places.map((place) => (
-            <article className="place-card" key={place.name}>
+          {places.slice(0, 4).map((place) => (
+            <a className="place-card" href={place.url} target="_blank" rel="noreferrer" key={place.name} aria-label={`Visit the official ${place.name} site`}>
               <span className="place-icon" aria-hidden="true">{place.icon}</span>
               <div><h3>{place.name}</h3><p>{place.detail}</p></div>
-              <button type="button" aria-label={`View ${place.name}`}>→</button>
-            </article>
+              <span className="place-arrow" aria-hidden="true">↗</span>
+            </a>
           ))}
         </div>
       </section>
@@ -457,7 +502,7 @@ export default function Home() {
       <footer>
         <a className="wordmark footer-wordmark" href="#top">nook <em>&amp; roam</em></a>
         <p>Less searching. More going.</p>
-        <p className="prototype-note">OpenAI Build Week prototype · Listings shown are representative demo data.</p>
+        <p className="prototype-note">OpenAI Build Week prototype · Tulsa examples link to official organizer pages; verify details before leaving.</p>
       </footer>
 
       {selectedEvent && (
@@ -474,16 +519,43 @@ export default function Home() {
             <dl>
               <div><dt>Cost</dt><dd>{selectedEvent.cost}</dd></div>
               <div><dt>Setting</dt><dd>{selectedEvent.setting}</dd></div>
-              <div><dt>Planning</dt><dd>{selectedEvent.registration}</dd></div>
+              <div>
+                <dt>Planning</dt>
+                <dd>
+                  {selectedEvent.registration}
+                  {selectedEvent.registrationNote && <small>{selectedEvent.registrationNote}</small>}
+                </dd>
+              </div>
               <div><dt>Age fit</dt><dd>{selectedEvent.ageLabel}</dd></div>
-              <div><dt>Getting around</dt><dd>{selectedEvent.stroller ? "Stroller friendly" : "Carrier recommended"}</dd></div>
+              <div><dt>Getting around</dt><dd>{selectedEvent.stroller ? "Stroller friendly" : "Not stroller friendly"}</dd></div>
               <div><dt>From your area</dt><dd>{Math.max(5, selectedEvent.driveMinutes + driveOffset)} min drive</dd></div>
             </dl>
             <div className="modal-actions">
-              <button className="primary-button" type="button" onClick={() => toggleFavorite(selectedEvent.id)}>
+              {selectedEvent.registrationUrl && (
+                <a
+                  className="primary-button"
+                  href={selectedEvent.registrationUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {selectedEvent.registration === "Advance ticket" ? "Go to tickets" : "Go to registration"} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              <button className="secondary-button" type="button" onClick={() => toggleFavorite(selectedEvent.id)}>
                 {favorites.includes(selectedEvent.id) ? "Saved to your list" : "Save this idea"}
               </button>
-              <span>Source link available when live feeds are connected.</span>
+            </div>
+            <div className="source-row">
+              <span>
+                {selectedEvent.registrationUrl
+                  ? selectedEvent.registration === "Advance ticket"
+                    ? "Tickets are selected on the organizer's site."
+                    : "Registration happens on the organizer's site."
+                  : "No advance registration is listed for this event."}
+              </span>
+              <a href={selectedEvent.sourceUrl} target="_blank" rel="noreferrer">
+                View official source <span aria-hidden="true">↗</span>
+              </a>
             </div>
           </section>
         </div>
