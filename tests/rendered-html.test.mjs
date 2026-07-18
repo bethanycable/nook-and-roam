@@ -26,11 +26,14 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /A few good ideas for your family/);
   assert.match(html, /Route 66 Festival: Tales of the Mother Road/);
   assert.match(html, /74103 · Tulsa/);
+  assert.match(html, /Change ZIP/);
+  assert.match(html, /Update area/);
   assert.match(html, /Philbrook Dog Days/);
   assert.match(html, /Registration required/);
   assert.match(html, /Open the form/);
   assert.match(html, /Nothing feels right/);
   assert.match(html, /Tulsa examples link to official organizer pages/);
+  assert.match(html, /aria-pressed="false"[^>]*><span aria-hidden="true">♡<\/span> Saved/);
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|react-loading-skeleton/i);
 });
 

@@ -272,16 +272,28 @@ export default function Home() {
     if (event.target === event.currentTarget) setSelectedEvent(null);
   }
 
+  function resetEventView() {
+    setDatePreset("weekend");
+    setAge("little");
+    setFreeOnly(false);
+    setIndoorOnly(false);
+    setStrollerOnly(false);
+    setDropInOnly(false);
+    setShowFilters(false);
+    setShowAll(false);
+    setShowSaved(false);
+  }
+
   return (
     <main>
       <header className="site-header">
-        <a className="wordmark" href="#top" aria-label="Nook and Roam home">
+        <a className="wordmark" href="#top" aria-label="Nook and Roam home" onClick={resetEventView}>
           nook <em>&amp; roam</em>
         </a>
         <nav aria-label="Primary navigation">
-          <a href="#events">Events</a>
+          <a href="#events" onClick={resetEventView}>Events</a>
           <a href="/places">Places to go</a>
-          <button className="saved-button" type="button" onClick={() => setShowSaved((value) => !value)}>
+          <button className="saved-button" type="button" aria-pressed={showSaved} onClick={() => setShowSaved((value) => !value)}>
             <span aria-hidden="true">♡</span> Saved {favorites.length > 0 && `(${favorites.length})`}
           </button>
         </nav>
@@ -314,17 +326,19 @@ export default function Home() {
           </div>
         </div>
         <form onSubmit={submitLocation} className="zip-form">
-          <label className="sr-only" htmlFor="zip">ZIP code</label>
-          <input
-            id="zip"
-            inputMode="numeric"
-            maxLength={5}
-            value={zipInput}
-            onChange={(event) => setZipInput(event.target.value)}
-            placeholder="ZIP code"
-          />
-          <span className="drive-limit">Within a 30-minute drive</span>
-          <button className="primary-button" type="submit">Find family fun</button>
+          <label className="zip-control" htmlFor="zip">
+            <span className="field-label">Change ZIP</span>
+            <input
+              id="zip"
+              inputMode="numeric"
+              maxLength={5}
+              value={zipInput}
+              onChange={(event) => setZipInput(event.target.value)}
+              placeholder="ZIP code"
+            />
+          </label>
+          <span className="drive-limit">Showing ideas within about a 30-minute drive.</span>
+          <button className="primary-button" type="submit">Update area</button>
         </form>
       </section>
       {locationError && <p className="location-message" role="status">{locationError}</p>}
