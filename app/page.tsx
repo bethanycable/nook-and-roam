@@ -45,6 +45,8 @@ type ZipLookupResponse = {
   }>;
 };
 
+type DatePreset = "upcoming" | "weekend" | "today" | "weekday";
+
 const venueLocations = {
   gatheringPlace: { latitude: 36.1196044, longitude: -95.9855622 },
   trinityBaptist: { latitude: 36.1048455, longitude: -96.0118967 },
@@ -305,8 +307,9 @@ export default function Home() {
   const [radiusMiles, setRadiusMiles] = useState(5);
   const [locationError, setLocationError] = useState("");
   const [isLocating, setIsLocating] = useState(false);
-  const [datePreset, setDatePreset] = useState<"upcoming" | "weekend" | "today" | "weekday">("upcoming");
+  const [datePreset, setDatePreset] = useState<DatePreset>("upcoming");
   const [age, setAge] = useState("little");
+  const [maxDriveMinutes, setMaxDriveMinutes] = useState(30);
   const [freeOnly, setFreeOnly] = useState(false);
   const [indoorOnly, setIndoorOnly] = useState(false);
   const [strollerOnly, setStrollerOnly] = useState(false);
@@ -347,9 +350,11 @@ export default function Home() {
     const selectedAge = ageOptions.find((option) => option.value === age) ?? ageOptions[0];
     return events.filter((event) => {
       const overlapsAge = event.ageMin <= selectedAge.max && event.ageMax >= selectedAge.min;
+      const distanceMiles = distanceInMiles(origin, event);
       return (
         (datePreset === "upcoming" || event.dayGroups.includes(datePreset)) &&
-        distanceInMiles(origin, event) <= radiusMiles &&
+        distanceMiles <= radiusMiles &&
+        estimatedDriveMinutes(distanceMiles) <= maxDriveMinutes &&
         overlapsAge &&
         (!freeOnly || event.isFree) &&
         (!indoorOnly || event.setting === "Indoor") &&
@@ -358,7 +363,7 @@ export default function Home() {
         (!showSaved || favorites.includes(event.id))
       );
     });
-  }, [age, datePreset, dropInOnly, favorites, freeOnly, indoorOnly, origin, radiusMiles, showSaved, strollerOnly]);
+  }, [age, datePreset, dropInOnly, favorites, freeOnly, indoorOnly, maxDriveMinutes, origin, radiusMiles, showSaved, strollerOnly]);
 
   const displayedEvents = showAll ? filteredEvents : filteredEvents.slice(0, eventPreviewLimit);
 
@@ -447,6 +452,7 @@ export default function Home() {
   function resetEventView() {
     setDatePreset("upcoming");
     setAge("little");
+    setMaxDriveMinutes(30);
     setFreeOnly(false);
     setIndoorOnly(false);
     setStrollerOnly(false);
@@ -537,42 +543,61 @@ export default function Home() {
 
       <section className="filter-section" aria-label="Event filters">
         <div className="quick-filters">
-          {([
-            ["upcoming", "Upcoming"],
-            ["weekend", "This weekend"],
-            ["today", "Today"],
-            ["weekday", "During the week"],
-          ] as const).map(([value, label]) => (
-            <button
-              key={value}
-              className="filter-chip date-chip"
-              data-active={datePreset === value}
-              aria-pressed={datePreset === value}
-              type="button"
-              onClick={() => {
-                setDatePreset(value);
+          <label className="filter-select">
+            <span className="filter-control-label">When</span>
+            <select
+              aria-label="When"
+              value={datePreset}
+              onChange={(event) => {
+                setDatePreset(event.target.value as DatePreset);
                 setShowAll(false);
               }}
             >
-              {label}
-            </button>
-          ))}
+              <option value="upcoming">Upcoming</option>
+              <option value="today">Today</option>
+              <option value="weekend">This weekend</option>
+              <option value="weekday">During the week</option>
+            </select>
+          </label>
           <label className="filter-select">
-            <span className="sr-only">Choose an age group</span>
-            <select value={age} onChange={(event) => setAge(event.target.value)}>
+            <span className="filter-control-label">Age</span>
+            <select
+              aria-label="Age group"
+              value={age}
+              onChange={(event) => {
+                setAge(event.target.value);
+                setShowAll(false);
+              }}
+            >
               {ageOptions.map((option) => (
                 <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
           </label>
-          <button className="filter-chip" data-active={freeOnly} aria-pressed={freeOnly} type="button" onClick={() => setFreeOnly((value) => !value)}>Free</button>
-          <button className="filter-chip" data-active={indoorOnly} aria-pressed={indoorOnly} type="button" onClick={() => setIndoorOnly((value) => !value)}>Indoor</button>
+          <label className="filter-select drive-filter">
+            <span className="filter-control-label">Estimated drive</span>
+            <select
+              aria-label="Estimated drive time"
+              value={maxDriveMinutes}
+              onChange={(event) => {
+                setMaxDriveMinutes(Number(event.target.value));
+                setShowAll(false);
+              }}
+            >
+              <option value={10}>Up to 10 minutes</option>
+              <option value={15}>Up to 15 minutes</option>
+              <option value={30}>Up to 30 minutes</option>
+            </select>
+          </label>
           <button className="all-filters" type="button" onClick={() => setShowFilters((value) => !value)} aria-expanded={showFilters}>
-            {showFilters ? "Fewer filters" : "All filters"}
+            {showFilters ? "Fewer filters" : "More filters"}
           </button>
         </div>
         {showFilters && (
           <div className="advanced-filters">
+            <span className="advanced-label">Fine-tune</span>
+            <label><input type="checkbox" checked={freeOnly} onChange={(event) => setFreeOnly(event.target.checked)} /> Free only</label>
+            <label><input type="checkbox" checked={indoorOnly} onChange={(event) => setIndoorOnly(event.target.checked)} /> Indoor only</label>
             <label><input type="checkbox" checked={strollerOnly} onChange={(event) => setStrollerOnly(event.target.checked)} /> Stroller friendly</label>
             <label><input type="checkbox" checked={dropInOnly} onChange={(event) => setDropInOnly(event.target.checked)} /> No registration needed</label>
             <button type="button" onClick={() => {
@@ -580,7 +605,6 @@ export default function Home() {
               setIndoorOnly(false);
               setStrollerOnly(false);
               setDropInOnly(false);
-              setAge("all");
             }}>Clear extras</button>
           </div>
         )}

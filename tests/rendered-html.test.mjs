@@ -30,6 +30,11 @@ test("server-renders the Nook & Roam experience", async () => {
   assert.match(html, /Search radius/);
   assert.match(html, /Within 5 miles/);
   assert.match(html, /Update area/);
+  assert.match(html, /When/);
+  assert.match(html, /Age group/);
+  assert.match(html, /Estimated drive/);
+  assert.match(html, /Up to 30 minutes/);
+  assert.match(html, /More filters/);
   assert.match(html, /Philbrook Dog Days/);
   assert.match(html, /Oklahoma! \+ The Dustbowl Radio Hour Preview/);
   assert.match(html, /9(?:<!--.*?-->|\s)*matches(?:<!--.*?-->|\s)*within(?:<!--.*?-->|\s)*5(?:<!--.*?-->|\s)*miles(?:<!--.*?-->|\s)*·(?:<!--.*?-->|\s)*9(?:<!--.*?-->|\s)*Tulsa examples/);

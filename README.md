@@ -15,7 +15,7 @@ The prototype turns scattered event information into a concise shortlist that an
 ## What the prototype does
 
 - Filters sourced Tulsa-area examples by a real 5, 10, or 20-mile radius from a ZIP centroid or an opt-in browser location.
-- Filters by timing, age group, cost, indoor setting, stroller access, and registration requirements.
+- Filters by timing, age group, estimated drive time, cost, indoor setting, stroller access, and registration requirements.
 - Distinguishes drop-in events from registration-required events and provides direct registration links.
 - Shows straight-line distance to each venue and a clearly labeled drive-time estimate from the selected area.
 - Saves promising ideas on the device for later.
@@ -55,6 +55,7 @@ The hackathon prototype uses a small, manually verified set of Tulsa-area listin
 - The default Tulsa ZIP, 74103, starts from its approximate geographic center. Other U.S. ZIP codes are resolved through [Zippopotam.us](https://docs.zippopotam.us/docs/getting-started/); only the ZIP code is sent for that lookup.
 - “Use my location” runs only after a user clicks it and grants browser permission. The returned coordinates remain in page memory and are not saved to localStorage or sent to the application server.
 - Venue distance uses the Haversine formula. Drive time is a transparent city-driving estimate derived from that distance; it is not a route, live traffic result, or promise of arrival time.
+- The compact drive-time preference uses that same estimate and offers 10, 15, or 30-minute limits; production routing would make this travel-time filter route-aware.
 - A production version would replace the drive-time estimate with a routing provider while keeping the ZIP fallback and permission-first location choice.
 
 ## Deliberate prototype boundaries
